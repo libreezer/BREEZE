@@ -1,0 +1,3 @@
+include ':BREEZETOOL'
+include ':app'
+rootProject.name = "BREEZE"
