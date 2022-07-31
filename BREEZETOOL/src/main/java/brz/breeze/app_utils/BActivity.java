@@ -71,12 +71,12 @@ public abstract class BActivity extends Activity {
 		}
 	}
 
-	public <T> View find(int id) {
-		return findViewById(id);
+	public <T> T find(int id) {
+		return (T)findViewById(id);
 	}
 	
-	public <T> View find(View baseView, int id){
-		return baseView.findViewById(id);
+	public <T> T find(View baseView, int id){
+		return (T)baseView.findViewById(id);
 	}
 
     
