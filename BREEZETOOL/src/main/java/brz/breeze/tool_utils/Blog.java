@@ -1,5 +1,9 @@
 package brz.breeze.tool_utils;
+import android.annotation.SuppressLint;
 import android.util.Log;
+
+import brz.breeze.app_utils.BAppUtils;
+import brz.breeze.app_utils.BApplication;
 import brz.breeze.file_utils.BFileUtils;
 import android.content.Context;
 import java.io.IOException;
@@ -23,6 +27,7 @@ public class Blog {
 	
 	public static int level = VERBOSE;
 	
+	@SuppressLint("StaticFieldLeak")
 	private static Context context;
 	
 	public Blog(Context context2){
@@ -43,29 +48,36 @@ public class Blog {
 	public static void d(String tag,String msg){
 		if(level <= DEBUG){
 			write(tag,"D",msg);
-			Log.v(tag,msg);
+			Log.d(tag,msg);
 		}
 	}
 	
 	public static void i(String tag,String msg){
 		if(level <= INFO){
 			write(tag,"I",msg);
-			Log.v(tag,msg);
+			Log.i(tag,msg);
 		}
 	}
 	
 	public static void w(String tag,String msg){
 		if(level <= WARN){
 			write(tag,"W",msg);
-			Log.v(tag,msg);
+			Log.w(tag,msg);
 		}
 	}
 	
 	public static void e(String tag,String msg){
 		if(level <= ERROR){
 			write(tag,"E",msg);
-			Log.v(tag,msg);
+			Log.e(tag,msg);
 		}
+	}
+
+	/**
+	 * @param content 控制台输出内容
+	 */
+	public static void ii(String content){
+		write(BAppUtils.getPackageName(BApplication.getContext()),"I",content);
 	}
 	
 	public static void write(String tag,String level,String msg){

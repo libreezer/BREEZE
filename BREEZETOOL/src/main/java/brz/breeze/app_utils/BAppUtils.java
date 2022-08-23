@@ -45,7 +45,7 @@ public class BAppUtils {
 	public static String getAppVersionName(Context Context) {
         String strVersion = null;
         try {
-            PackageInfo pi = null;
+            PackageInfo pi;
             pi = Context.getPackageManager().getPackageInfo(Context.getPackageName(), 0);
             if (pi != null) {
                 strVersion = pi.versionName;
@@ -76,7 +76,7 @@ public class BAppUtils {
 	*@author BREEZE
 	*/
     public static boolean getIsRoot() {
-        boolean isRoot = false;
+        boolean isRoot;
         try {
             isRoot = (new File("/system/bin/su").exists())
                 || (new File("/system/xbin/su").exists());
@@ -85,8 +85,6 @@ public class BAppUtils {
         }
         return isRoot;
 	}
-	
-	public static Application mApplication;
 
 	public static InputStream getResFromAssets(Context context,String path){
 		try{
@@ -113,7 +111,10 @@ public class BAppUtils {
 		}
 		executorService.execute(runnable);
 	}
-	
+
+	/**
+	 * @param runnable 主线程运行
+	 */
 	public static void uiExecute(Runnable runnable){
 		if(uiHandler == null){
 			uiHandler = new Handler(Looper.getMainLooper());

@@ -3,13 +3,19 @@ package brz.breeze.web_utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Set;
 
 public class BWebUtils {
 
@@ -71,5 +77,35 @@ public class BWebUtils {
         input.close();
         outputStream.close();
         return new String(out.toByteArray(), StandardCharsets.UTF_8);
+    }
+
+
+    private static String getWebData(String url, String post, HashMap<String, String> headers) throws Exception {
+        URL url1 = new URL(url);
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
+        httpURLConnection.setDoOutput(true);
+        httpURLConnection.setDoInput(true);
+        if (headers != null) {
+            Set<String> strings = headers.keySet();
+            for (String item : strings) {
+                httpURLConnection.setRequestProperty(item, headers.get(item));
+            }
+        }
+        if (post == null) {
+            httpURLConnection.setRequestMethod("GET");
+        } else {
+            httpURLConnection.setRequestMethod("POST");
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream(), StandardCharsets.UTF_8);
+            PrintWriter printWriter = new PrintWriter(outputStreamWriter);
+            printWriter.print(post);
+            printWriter.flush();
+        }
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+        String line;
+        StringBuilder stringBuilder = new StringBuilder();
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuilder.append(line);
+        }
+        return stringBuilder.toString();
     }
 }

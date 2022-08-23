@@ -17,6 +17,7 @@ import java.io.InputStream;
 import android.app.Activity;
 import android.content.Intent;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class BFileUtils {
 
     public static final String TAG = "BFileUtils";
@@ -91,7 +92,7 @@ public class BFileUtils {
 	/**
 	 *@author BREEZE
 	 *@param old 旧文件路径
-	 *@param newFile 新文件路径
+	 *@param newfile 新文件路径
 	 */
 	public static void copyFile(final String old, final String newfile) throws IOException {
 		int bytesum = 0;   
@@ -152,7 +153,7 @@ public class BFileUtils {
 
 				final String id = DocumentsContract.getDocumentId(uri);
 				final Uri contentUri = ContentUris.withAppendedId(
-                    Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                    Uri.parse("content://downloads/public_downloads"), Long.parseLong(id));
 
 				return getDataColumn(context, contentUri, null, null);
 			}
