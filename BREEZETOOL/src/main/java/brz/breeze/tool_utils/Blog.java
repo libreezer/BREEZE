@@ -77,7 +77,8 @@ public class Blog {
 	 * @param content 控制台输出内容
 	 */
 	public static void ii(String content){
-		write(BAppUtils.getPackageName(BApplication.getContext()),"I",content);
+		write("B_LOG","I",content);
+		Log.i("B_LOG",content);
 	}
 	
 	public static void write(String tag,String level,String msg){
