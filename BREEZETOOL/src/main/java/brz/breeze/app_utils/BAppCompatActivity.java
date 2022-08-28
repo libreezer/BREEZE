@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Map;
 
-public abstract class BAcitivityCompat extends AppCompatActivity {
+public abstract class BAppCompatActivity extends AppCompatActivity {
 
     public SharedPreferences preference;
 
