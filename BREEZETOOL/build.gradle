@@ -10,8 +10,8 @@ afterEvaluate {
                 from components.release
 
                 groupId = 'brz.breeze'
-                artifactId = 'breeze'
-                version = '1.0'
+                artifactId = 'tool'
+                version = '1.0.0'
             }
         }
     }
