@@ -1,5 +1,20 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication){
+                from components.release
+
+                groupId = 'brz.breeze'
+                artifactId = 'breeze'
+                version = '1.0'
+            }
+        }
+    }
 }
 
 android {
@@ -11,12 +26,12 @@ android {
             keyPassword '258369'
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "29.0.2"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 33
+        targetSdkVersion 30
         versionCode 20220730
         versionName "1.0"
 
