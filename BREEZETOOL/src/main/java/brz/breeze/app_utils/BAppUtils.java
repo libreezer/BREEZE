@@ -31,7 +31,8 @@ public class BAppUtils {
 	}
 	
 	/**
-	*@author BREEZE
+	 *  @author BREEZE
+	 *  * @return 获取安卓版本
 	*/
 	public static String getAndroidVersion()
     {

@@ -11,7 +11,12 @@ import android.graphics.RectF;
 import android.graphics.BitmapFactory;
 
 public class BBitmapUtils {
-    
+
+	/**
+	 * @param bitmap 图像
+	 * @param radius 圆角度数
+	 * @return
+	 */
     public static Bitmap getRoundedBitmap(Bitmap bitmap,int radius){
 		Bitmap bit=Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight(),Bitmap.Config.ARGB_8888);
 		Canvas canvas=new Canvas(bit);
@@ -25,7 +30,12 @@ public class BBitmapUtils {
 		canvas.drawBitmap(bitmap,rect,rect,p);
 		return bit;
 	}
-	
+
+	/**
+	 * @param bitmap 图片
+	 * @param brightness 亮度
+	 * @return
+	 */
 	public static Bitmap setBitmapBrightness(Bitmap bitmap,int brightness){
 		Bitmap bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),  
 										 bitmap.getConfig());  

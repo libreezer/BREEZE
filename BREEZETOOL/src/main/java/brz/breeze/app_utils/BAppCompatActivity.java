@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +24,7 @@ public abstract class BAppCompatActivity extends AppCompatActivity {
     public void toast(final String message){
         runOnUiThread(new Runnable(){
             public void run(){
-                BToast.toast(getApplicationContext(),message,BToast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
             }
         });
     }

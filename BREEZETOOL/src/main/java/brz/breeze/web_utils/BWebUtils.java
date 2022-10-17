@@ -38,7 +38,9 @@ public class BWebUtils {
     /**
      * @param uri 网页链接
      * @author BREEZE
+     * @deprecated 这个方法已经被遗弃，请使用 getWebData 代替
      */
+    @Deprecated
     public static String getWebContent(String uri) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -59,7 +61,9 @@ public class BWebUtils {
      * @param uri  网页链接
      * @param post POST内容
      * @author BREEZE
+     * @deprecated 这个方法已经被遗弃，请使用 getWebData 代替
      */
+    @Deprecated
     public static String postWebData(String uri, String post) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -80,6 +84,13 @@ public class BWebUtils {
     }
 
 
+    /**
+     * @param url 网址
+     * @param post post数据（可选）
+     * @param headers 头部标识（可选）
+     * @return 网页响应
+     * @throws Exception 网络请求错误
+     */
     private static String getWebData(String url, String post, HashMap<String, String> headers) throws Exception {
         URL url1 = new URL(url);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
@@ -108,4 +119,6 @@ public class BWebUtils {
         }
         return stringBuilder.toString();
     }
+
+
 }

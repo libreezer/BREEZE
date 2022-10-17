@@ -7,7 +7,13 @@ import android.view.View;
 import java.util.Map;
 
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
+
+/**
+ * @deprecated 这个类已经不推荐使用，请使用BAppCompatActivity代替
+ */
+@Deprecated
 public abstract class BActivity extends Activity {
 	
 	public SharedPreferences preference;
@@ -21,7 +27,7 @@ public abstract class BActivity extends Activity {
 	public void toast(final String message){
 		runOnUiThread(new Runnable(){
 			public void run(){
-				BToast.toast(getApplicationContext(),message,BToast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
 			}
 		});
 	}

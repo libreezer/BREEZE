@@ -76,11 +76,16 @@ public class Blog {
 	/**
 	 * @param content 控制台输出内容
 	 */
-	public static void ii(String content){
-		write("B_LOG","I",content);
-		Log.i("B_LOG",content);
+	public static void log(String content){
+		write("BREEZE","I",content);
+		Log.i("BREEZE",content);
 	}
-	
+
+	/**
+	 * @param tag 标签
+	 * @param level 日志等级
+	 * @param msg 日志信息
+	 */
 	public static void write(String tag,String level,String msg){
 		StringBuilder sb = new StringBuilder();
 		sb.append(level).append("/").append(tag).append(BToolUtils.getTime("[yyyy-MM-dd HH:mm:ss]"))
