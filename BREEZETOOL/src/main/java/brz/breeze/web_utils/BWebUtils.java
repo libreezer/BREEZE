@@ -22,13 +22,6 @@ import java.util.Set;
 import brz.breeze.app_utils.BAppUtils;
 
 public class BWebUtils {
-
-    public interface WebRequestCallBack {
-        void onSuccess(String data);
-
-        void onFailure(Exception exception);
-    }
-
     public static final String TAG = "BWebUtils";
 
     /**
@@ -49,30 +42,6 @@ public class BWebUtils {
      * @param url     网址
      * @param post    post数据（可选）
      * @param headers 头部标识（可选）
-     */
-    public static void getWebData(final String url, final String post, final HashMap<String, String> headers, final WebRequestCallBack callBack) {
-        BAppUtils.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(openWebConnection(url, post, headers).getInputStream()));
-                    String line;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line);
-                    }
-                    callBack.onSuccess(stringBuilder.toString());
-                } catch (Exception exception) {
-                    callBack.onFailure(exception);
-                }
-            }
-        });
-    }
-
-    /**
-     * @param url     网址
-     * @param post    post数据（可选）
-     * @param headers 头部标识（可选）
      * @throws Exception 网络请求错误
      */
     public static String getWebData(final String url, final String post, final HashMap<String, String> headers) throws Exception {
@@ -82,6 +51,7 @@ public class BWebUtils {
         while ((line = bufferedReader.readLine()) != null) {
             stringBuilder.append(line);
         }
+        bufferedReader.close();
         return stringBuilder.toString();
     }
 
@@ -114,6 +84,7 @@ public class BWebUtils {
         void onSuccess(File targetPath);
 
         void onError(Exception exception);
+
     }
 
     public static void downloadFile(final String link, final File targetPath, final WebDownloadListener listener) {

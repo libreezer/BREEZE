@@ -3,7 +3,6 @@ package brz.breeze.app_utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -37,25 +36,16 @@ public class BHotFixUtils {
 
     public static void checkPatch(final HotFixListener listener) {
         String NEWAPI = API.replace("{version}", String.valueOf(BAppUtils.getVersionCode(mContext)));
-        BWebUtils.getWebData(NEWAPI, null, null, new BWebUtils.WebRequestCallBack() {
-            @Override
-            public void onSuccess(String data) {
-                try {
-                    JSONObject jsonObject = new JSONObject(data);
-                    int status = jsonObject.getInt("status");
-                    String file = jsonObject.getString("file");
-                    listener.result(status, file);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    listener.result(0, e.toString());
-                }
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                listener.result(0, exception.toString());
-            }
-        });
+        try {
+            String data = BWebUtils.getWebData(NEWAPI, null, null);
+            JSONObject jsonObject = new JSONObject(data);
+            int status = jsonObject.getInt("status");
+            String file = jsonObject.getString("file");
+            listener.result(status, file);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            listener.result(0, exception.toString());
+        }
     }
 
     public static void fixApp() throws Exception {
@@ -69,39 +59,53 @@ public class BHotFixUtils {
 
     private static Object getDexElements(ClassLoader classLoader) throws Exception {
         //先获取pathList
-        Field pathList = Class.forName("dalvik.system.BaseDexClassLoader").getDeclaredField("pathList");
+        Field pathList = Class.forName("dalvik.system.BaseDexClassLoader")
+                .getDeclaredField("pathList");
         pathList.setAccessible(true);
         Object pathListValue = pathList.get(classLoader);
 
         //再获取dexElements
-        Field dexElements = pathListValue.getClass().getDeclaredField("dexElements");
+        Field dexElements = pathListValue.getClass().
+                getDeclaredField("dexElements");
         dexElements.setAccessible(true);
         return dexElements.get(pathListValue);
     }
 
+
     private static Object combineArray(Object obj, Object obj2) {
+        //获取数据类型
         Class<?> componentType = obj.getClass().getComponentType();
-        int length = Array.getLength(obj);
-        int length1 = Array.getLength(obj2);
-        Object newInstance = Array.newInstance(componentType, length + length1);
-        for (int i = 0; i < length + length1; i++) {
-            if (i < length1) {
-                Array.set(newInstance, i, Array.get(obj2, i));
-            } else {
-                Array.set(newInstance, i, Array.get(obj, i - length1));
+        if (componentType != null) {
+            //获取两个数组的长度
+            int length = Array.getLength(obj);
+            int length1 = Array.getLength(obj2);
+            //创建新的数组，长度为前两个数组长度之和
+            Object newInstance = Array.newInstance(componentType, length + length1);
+            //添加数据，把第二个数组的数据放在第一个之前
+            for (int i = 0; i < length + length1; i++) {
+                if (i < length1) {
+                    Array.set(newInstance, i, Array.get(obj2, i));
+                } else {
+                    //i- length1是为了把指针归0来读取数组1的数据
+                    Array.set(newInstance, i, Array.get(obj, i - length1));
+                }
             }
+            return newInstance;
         }
-        return newInstance;
+        return null;
     }
 
     private static void setDexElements(ClassLoader classLoader, Object obj) throws Exception {
-        Field pathList = Class.forName("dalvik.system.BaseDexClassLoader").getDeclaredField("pathList");
+        Field pathList = Class.forName("dalvik.system.BaseDexClassLoader")
+                .getDeclaredField("pathList");
         pathList.setAccessible(true);
         Object pathListValue = pathList.get(classLoader);
 
         //再获取dexElements
-        Field dexElements = pathListValue.getClass().getDeclaredField("dexElements");
+        Field dexElements = pathListValue.getClass()
+                .getDeclaredField("dexElements");
         dexElements.setAccessible(true);
+        //把返回改成设置
         dexElements.set(pathListValue, obj);
     }
 
@@ -122,8 +126,8 @@ public class BHotFixUtils {
         //设置到原来的那个加载器
         setDexElements(classLoader, combineArray);
 
-        //重新加载类
-        //classLoader.loadClass()
+        //重新加载指定类
+        //classLoader.loadClass(类路径)
     }
 
 }
