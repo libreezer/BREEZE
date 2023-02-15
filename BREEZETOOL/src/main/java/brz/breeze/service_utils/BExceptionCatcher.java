@@ -41,29 +41,9 @@ public class BExceptionCatcher implements Thread.UncaughtExceptionHandler {
         }
         String Exception_content = writer.toString();
         try {
-            String path = BFileUtils.getExternalCacheFile(mContext, "Exception") + "错误日志.txt";
-            BFileUtils.createFile(path);
+            String path = BFileUtils.getExternalCacheFile(mContext, "Exception") + "ErrorLog.txt";
+            BFileUtils.createMultiFilePath(path);
             BFileUtils.writeFileContent(path, Exception_content);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Deprecated
-    public static void e(Context context, Exception p2) {
-        Writer writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        p2.printStackTrace(printWriter);
-        Throwable throwable = p2.getCause();
-        while (throwable != null) {
-            throwable.printStackTrace(printWriter);
-            throwable = throwable.getCause();
-        }
-        final String Exception_content = writer.toString() + "\n\n\n";
-        String log_path = BFileUtils.getExternalCacheFile(context, "logcat") + "Error.txt";
-        try {
-            BFileUtils.createFile(log_path);
-            BFileUtils.addContentToFile(log_path, Exception_content);
         } catch (IOException e) {
             e.printStackTrace();
         }

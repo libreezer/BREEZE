@@ -3,16 +3,9 @@ package brz.breeze.app_utils;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,8 +24,8 @@ public class BAppUpdate {
     private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     /**
-     * @param context 上下文
-     * @param link 更新请求连接
+     * @param context  上下文
+     * @param link     更新请求连接
      * @param listener 更新监听器
      */
     public static void setOnUpdateListener(Context context, String link, BAppUpdateListener listener) {
@@ -43,7 +36,7 @@ public class BAppUpdate {
             @Override
             public void run() {
                 try {
-                    String result = BWebUtils.getWebContent(appLink);
+                    String result = BWebUtils.getWebData(appLink, null, null);
                     if (result.equals("") || result == null) {
                         threadFinished(null);
                     } else {

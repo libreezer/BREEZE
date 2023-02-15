@@ -2,13 +2,15 @@ package brz.breeze.web_utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -17,7 +19,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Set;
 
+import brz.breeze.app_utils.BAppUtils;
+
 public class BWebUtils {
+
+    public interface WebRequestCallBack {
+        void onSuccess(String data);
+
+        void onFailure(Exception exception);
+    }
 
     public static final String TAG = "BWebUtils";
 
@@ -36,62 +46,46 @@ public class BWebUtils {
     }
 
     /**
-     * @param uri 网页链接
-     * @author BREEZE
-     * @deprecated 这个方法已经被遗弃，请使用 getWebData 代替
-     */
-    @Deprecated
-    public static String getWebContent(String uri) throws IOException {
-        URL url = new URL(uri);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        InputStream input = con.getInputStream();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] bytes = new byte[1024];
-        int len;
-        while ((len = input.read(bytes)) != -1) {
-            out.write(bytes, 0, len);
-        }
-        out.close();
-        input.close();
-        return new String(out.toByteArray(), StandardCharsets.UTF_8);
-    }
-
-    /**
-     * @param uri  网页链接
-     * @param post POST内容
-     * @author BREEZE
-     * @deprecated 这个方法已经被遗弃，请使用 getWebData 代替
-     */
-    @Deprecated
-    public static String postWebData(String uri, String post) throws IOException {
-        URL url = new URL(uri);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("POST");
-        OutputStream outputStream = con.getOutputStream();
-        outputStream.write(post.getBytes());
-        InputStream input = con.getInputStream();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] bytes = new byte[1024];
-        int len;
-        while ((len = input.read(bytes)) != -1) {
-            out.write(bytes, 0, len);
-        }
-        out.close();
-        input.close();
-        outputStream.close();
-        return new String(out.toByteArray(), StandardCharsets.UTF_8);
-    }
-
-
-    /**
-     * @param url 网址
-     * @param post post数据（可选）
+     * @param url     网址
+     * @param post    post数据（可选）
      * @param headers 头部标识（可选）
-     * @return 网页响应
+     */
+    public static void getWebData(final String url, final String post, final HashMap<String, String> headers, final WebRequestCallBack callBack) {
+        BAppUtils.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(openWebConnection(url, post, headers).getInputStream()));
+                    String line;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    callBack.onSuccess(stringBuilder.toString());
+                } catch (Exception exception) {
+                    callBack.onFailure(exception);
+                }
+            }
+        });
+    }
+
+    /**
+     * @param url     网址
+     * @param post    post数据（可选）
+     * @param headers 头部标识（可选）
      * @throws Exception 网络请求错误
      */
-    private static String getWebData(String url, String post, HashMap<String, String> headers) throws Exception {
+    public static String getWebData(final String url, final String post, final HashMap<String, String> headers) throws Exception {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(openWebConnection(url, post, headers).getInputStream()));
+        String line;
+        StringBuilder stringBuilder = new StringBuilder();
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuilder.append(line);
+        }
+        return stringBuilder.toString();
+    }
+
+    public static HttpURLConnection openWebConnection(String url, String post, HashMap<String, String> headers) throws Exception {
         URL url1 = new URL(url);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
         httpURLConnection.setDoOutput(true);
@@ -111,14 +105,46 @@ public class BWebUtils {
             printWriter.print(post);
             printWriter.flush();
         }
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-        String line;
-        StringBuilder stringBuilder = new StringBuilder();
-        while ((line = bufferedReader.readLine()) != null) {
-            stringBuilder.append(line);
-        }
-        return stringBuilder.toString();
+        return httpURLConnection;
     }
 
+    public interface WebDownloadListener {
+        void onProgress(int progress);
+
+        void onSuccess(File targetPath);
+
+        void onError(Exception exception);
+    }
+
+    public static void downloadFile(final String link, final File targetPath, final WebDownloadListener listener) {
+        BAppUtils.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HttpURLConnection httpURLConnection = openWebConnection(link, null, null);
+                    BufferedInputStream bufferedInputStream = new BufferedInputStream(httpURLConnection.getInputStream());
+                    FileOutputStream fileOutputStream = new FileOutputStream(targetPath);
+                    byte[] bytes = new byte[2048];
+                    int length, recorded = 0;
+                    long totalLength = Build.VERSION.SDK_INT >= 24 ? httpURLConnection.getContentLengthLong() : httpURLConnection.getContentLength();
+                    while ((length = bufferedInputStream.read(bytes)) != -1) {
+                        recorded += length;
+                        if (totalLength > -1) {
+                            listener.onProgress((int) (((float) recorded / (float) totalLength) * 100));
+                        } else {
+                            listener.onProgress(-1);
+                        }
+                        fileOutputStream.write(bytes);
+                    }
+                    fileOutputStream.close();
+                    bufferedInputStream.close();
+                    listener.onSuccess(targetPath);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    listener.onError(exception);
+                }
+            }
+        });
+    }
 
 }

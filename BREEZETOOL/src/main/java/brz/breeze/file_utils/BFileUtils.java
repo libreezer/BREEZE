@@ -62,7 +62,7 @@ public class BFileUtils {
 	 *@author BREEZE
 	 *@param path 文件路径
 	 */
-	public static void createFile(String path) throws IOException {
+	public static void createMultiFilePath(String path) throws IOException {
 		if (path.startsWith("/")) {
 			path = path.substring(1);
 		}
@@ -73,7 +73,6 @@ public class BFileUtils {
 			if (i != dir_path.length - 1) {
 				String child_path = dir_path[i] + "/";
 				String child_dir_path = sb.toString() + child_path;
-				System.out.println(child_dir_path);
 				File file = new File(child_dir_path);
 				if (!file.exists()) {
 					file.mkdir();

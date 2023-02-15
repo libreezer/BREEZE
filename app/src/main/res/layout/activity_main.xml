@@ -8,7 +8,7 @@
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="多线程下载功能测试"
+        android:text="热修复文件下载测试"
         android:onClick="multiThreadDownload"
         tools:ignore="HardcodedText" />
 </LinearLayout>
