@@ -31,7 +31,7 @@ public class BHotFixUtils {
     }
 
     public interface HotFixListener {
-        void result(int status, String file);
+        void result(int status, String file, String version);
     }
 
     public static void checkPatch(final HotFixListener listener) {
@@ -41,18 +41,21 @@ public class BHotFixUtils {
             JSONObject jsonObject = new JSONObject(data);
             int status = jsonObject.getInt("status");
             String file = jsonObject.getString("file");
-            listener.result(status, file);
+            String version = jsonObject.getString("version");
+            listener.result(status, file, version);
         } catch (Exception exception) {
             exception.printStackTrace();
-            listener.result(0, exception.toString());
+            listener.result(0, exception.toString(), "-1");
         }
     }
 
     public static void fixApp() throws Exception {
         File[] files = patchStoragePath.listFiles();
-        for (File file : files) {
-            if (file.getName().endsWith(".dex")) {
-                patch(file.getAbsolutePath());
+        if (files!=null){
+            for (File file : files) {
+                if (file.getName().endsWith(".dex")) {
+                    patch(file.getAbsolutePath());
+                }
             }
         }
     }
